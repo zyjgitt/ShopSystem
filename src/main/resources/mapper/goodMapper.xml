@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zyj.mapper.GoodMapper">
+
+    <resultMap id="goodmap" type="good">
+
+        <result property="code" column="code"/>
+        <result property="name" column="name"/>
+        <result property="price" column="price"/>
+        <result property="storeName" column="storeName"/>
+        <result property="registerDate" column="registerDate"/>
+        <association property="goodType" javaType="goodType">
+           <result property="name" column="typeName"/>
+        </association>
+    </resultMap>
+<!--
+ g.name,d.imgUrl,d.salePrice,d.description,d.num from good g,goodDetail d-->
+    <resultMap id="gooddet" type="good">
+        <id property="id" column="id"/>
+        <result property="code" column="code"/>
+        <result property="name" column="name"/>
+        <result property="ifReturn" column="ifReturn"/>
+        <collection property="goodDetails" ofType="goodDetail">
+            <id property="id" column="did"/>
+            <result property="imgUrl" column="imgUrl"/>
+            <result property="salePrice" column="salePrice"/>
+            <result property="description" column="description"/>
+            <result property="num" column="num"/>
+        </collection>
+    </resultMap>
+
+
+
+    <insert id="saveSupplier" parameterType="supplier">
+        insert into supplier(code,name,regCompany,address,createTime) values(#{code},#{name},#{regCompany},#{address},#{createTime})
+    </insert>
+
+    <select id="selSupplierExist" parameterType="string" resultType="int">
+        select count(*) from supplier where name=#{name}
+    </select>
+
+    <select id="selAllGoodType" resultType="goodType">
+        select id,name from goodType;
+    </select>
+
+    <select id="selAllSupplier" resultType="supplier">
+        select name,id from supplier
+    </select>
+
+    <insert id="saveGood" parameterType="good">
+        insert into good(code,name,price,briefCode,typeId,supplierId,storeName,ifGift,ifReturn,registerDate,imgUrl)
+        values(#{code},#{name},#{price},#{briefCode},#{typeId},#{supplierId},#{storeName},#{ifGift},#{ifReturn},#{registerDate},#{imgUrl})
+    </insert>
+
+    <insert id="saveGoodDetail" parameterType="goodDetail">
+        insert into goodDetail(goodCode,goodDetailCode,description,costPrice,salePrice,num,imgUrl,createTime)
+        values(#{goodCode},#{goodDetailCode},#{description},#{costPrice},#{salePrice},#{num},#{imgUrl},#{createTime})
+    </insert>
+
+    <select id="selAllGoodByType" parameterType="int" resultType="good">
+        select *  from good where typeId=#{typeId}
+    </select>
+
+    <select id="selAllGoodByStore" parameterType="string" resultMap="goodmap">
+         select g.code,g.name,g.price,g.registerDate,g.storeName,t.name typeName from good g,goodType t where storeName =#{storeName} and g.typeId = t.id
+    </select>
+
+    <select id="selGoodDetailByStore" parameterType="string" resultType="goodDetail">
+        select d.id,d.goodCode,d.goodDetailCode,d.description,d.imgUrl,d.costPrice,d.salePrice,d.createTime,d.num
+         from goodDetail d,good g where g.code=d.goodCode and g.storeName=#{storeName}
+    </select>
+
+    <select id="selGoodALLMessage" parameterType="string" resultType="good">
+        select * from good  where storeName =#{storeName}
+    </select>
+
+    <select id="selAllGood"  resultType="good">
+        select  imgUrl,name,code  from good
+    </select>
+
+    <select id="selGoodDetailByGoodCode" parameterType="string" resultMap="gooddet">
+        select g.id,g.name,g.code,g.ifReturn,d.id did,d.imgUrl,d.salePrice,d.description,d.num from good g,goodDetail d
+        where g.code=d.goodCode and d.goodCode=#{code}
+    </select>
+
+    <!--<select id="selNum" parameterType="goodDetail" resultType="goodDetail">
+        select imgUrl,salePrice,num from goodDetail where goodCode=#{goodCode} and description=#{description}
+    </select>-->
+    <insert id="saveShopCart" parameterType="shopCart">
+        insert into shopCart(goodCode,did,goodName,imgUrl,descr,price,number) values(#{goodCode},#{did},#{goodName},#{imgUrl},#{descr},#{price},#{number})
+    </insert>
+
+</mapper>

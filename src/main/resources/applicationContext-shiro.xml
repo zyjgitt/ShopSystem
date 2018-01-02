@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean id="credentialsMatcher" class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+        <property name="hashAlgorithmName" value="MD5"/>
+        <property name="hashIterations" value="3"/>
+    </bean>
+
+    <bean id="realm" class="com.zyj.reaml.CustomRealm">
+       <property name="credentialsMatcher" ref="credentialsMatcher"/>
+    </bean>
+
+     <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+         <property name="realm" ref="realm"/>
+     </bean>
+
+     <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+         <property name="securityManager" ref="securityManager"/>
+         <property name="loginUrl" value="/login"/>
+        <!-- <property name="successUrl" value="/sel"/>-->
+         <property name="unauthorizedUrl" value="refuse.jsp"/>
+         <property name="filterChainDefinitions">
+             <value>
+                 <!--验证用户名是否已存在-->
+                 /js/**=anon
+                 /check=anon
+
+                 /images=anon
+                 /=anon
+                 /login.jsp=anon
+
+                 /reg.jsp=anon
+                 /reg=anon
+                 <!--退出-->
+                 /logout=logout
+                 <!--设置所有请求均需要认证-->
+                 /**=authc
+             </value>
+         </property>
+     </bean>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</beans>

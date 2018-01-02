@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zyj.mapper.UserMapper">
+
+
+    <insert id="saveUser" parameterType="user">
+        insert into user_tab(number,username,password,salt,grade,idCard,name,regDate,email,phoneNum)
+        values(#{number},#{username},#{password},#{salt},#{grade},#{idCard},#{name},#{regDate},#{email},#{phoneNum})
+    </insert>
+
+    <select id="checkNo" parameterType="string" resultType="int">
+        select count(*) from user_tab where username=#{no}
+    </select>
+
+    <select id="selectUserByUsercode" parameterType="string" resultType="user">
+        select * from user_tab where username = #{usercode}
+    </select>
+</mapper>
